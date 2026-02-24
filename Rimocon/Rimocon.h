@@ -32,11 +32,11 @@ class Rimocon{
     //            uint8_t pinTgl[],
     //            uint8_t pinVlm[],
     //            uint8_t pinJstk[]);
-    //void readAll();
-    //  void readButtons();
-    //  void readToggles();
-    //  void readVolumes();
-    //  void readJoysticks();
+    void readAll();
+      void readButtons();
+      void readToggles();
+      void readVolumes();
+      void readJoysticks();
     //void detectAll(bool resultBtn[],
     //               int resultTgl[],
     //               int resultVlm[],
@@ -76,35 +76,7 @@ bool attach(uint8_t pinBtn[], uint8_t pinTgl[], uint8_t pinVlm[], uint8_t pinJst
   return is_succesed; 
 }
 
-
-void readButtons(){
-  for(int btn_id; btn_id < BTN; btn_id++){
-    buttons[btn_id].readState();
-  }
-}
-void readToggles(){
-  for(int tgl_id; tgl_id < TGL*2; tgl_id++){
-    this->toggles[tgl_id].readState();
-  }
-}
-void readVolumes(){
-  for(int vlm_id; vlm_id < VLM; vlm_id++){
-    this->volumes[vlm_id].readValue();
-  }
-}
-void readJoysticks(){
-  for(int jstk_id; jstk_id < JSTK*3; jstk_id++){
-    this->joysticks[jstk_id].readAll();
-  }
-}
-
-void readAll(){
-  this->readButtons();
-  this->readToggles();
-  this->readVolumes();
-  this->readJoysticks();
-}
-
+///
 
 void buttonPushed(bool resultBtn[]){
   if(!BTN || resultBtn == NULL) return;
@@ -149,6 +121,7 @@ void detectAll(bool resultBtn[], int resultTgl[], int resultVlm[], Polar resultJ
     Toggle toggles[TGL];
     Volume volumes[VLM];
     Joystick joysticks[JSTK];
+    
 };
 
 #endif
