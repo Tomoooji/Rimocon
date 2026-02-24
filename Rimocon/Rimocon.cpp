@@ -1,34 +1,37 @@
 #include "Rimocon.h"
-/*
-bool Rimocon::attach(uint8_t pinBtn[], uint8_t pinTgl[], uint8_t pinVlm[], uint8_t pinJstk[]){
-  bool is_succesed;
-  if(pinBtn != NULL){
-    for(int btn_id; btn_id < BTN; btn_id++){
-    //for(Button btn: this->buttons){
-      is_succesed = is_succesed && this->buttons[btn_id].attach(pinBtn[btn_id]);
-    }
+
+bool Rimocon::attachButton(uint8_t pins[]){
+  uint8_t pinId = 0;
+  for(Button& btn: this->buttons){
+    btn.attach(pins[pinId]);
+    pinId+=1;
   }
-  if(!is_succesed) return false; 
-  if(pinTgl != NULL){
-    for(int tgl_id; tgl_id < TGL*2; tgl_id++){
-      is_succesed = is_succesed && this->toggles[tgl_id].attach(pinTgl[tgl_id*2], pinTgl[tgl_id*2+1]);
-    }
-  }
-  if(!is_succesed) return false; 
-  if(pinVlm != NULL){
-    for(int vlm_id; vlm_id < VLM; vlm_id++){
-      is_succesed = is_succesed && this->volumes[vlm_id].attach(pinVlm[vlm_id]);
-    }
-  }
-  if(!is_succesed) return false; 
-  if(pinJstk != NULL){
-    for(int jstk_id; jstk_id < JSTK*3; jstk_id++){
-      is_succesed = is_succesed && this->joysticks[jstk_id].attach(pinJstk[jstk_id*3], pinJstk[jstk_id*3+1], pinJstk[jstk_id*3+2]);
-    }
-  }
-  return is_succesed; 
 }
-*/
+
+bool Rimocon::attachVolume(uint8_t pins[]){
+  uint8_t pinId = 0;
+  for(volume& vlm: this->volumes){
+    vlm.attach(pins[pinId]);
+    pinId+=1;
+  }
+}
+
+bool Rimocon::attachToggle(uint8_t pin1s[], uint8_t pin2s[]){
+  uint8_t pinId = 0;
+  for(Toggle& tgl: this->toggles){
+    tgl.attach(pin1s[pinId*2], pin2s[pinId*2+1]);
+    pinId+=2;
+  }
+}
+
+bool Rimocon::attachJoystick(uint8_t pinXs[], uint8_t pinYs[], uint8_t pinBtns[]){
+  uint8_t pinId = 0;
+  for(Joystick& : this->joystick){
+    tgl.attach(pinXs[pinId*3], pinYs[pinId*3+1], pinBtns[pinId*3+1]);
+    pinId+=3;
+  }
+}
+
 void Rimocon::readAll(){
   this->readButtons();
   this->readToggles();
@@ -37,70 +40,75 @@ void Rimocon::readAll(){
 }
 
 void Rimocon::readButtons(){
-  for(Button btn: this->buttons){
+  for(Button& btn: this->buttons){
   //for(int btn_id; btn_id < BTN; btn_id++){
     btn.readState();
   }
 }
 void Rimocon::readToggles(){
-  for(Toggle tgl: this->toggles){
+  for(Toggle& tgl: this->toggles){
   //for(int tgl_id; tgl_id < TGL*2; tgl_id++){
     tgl.readState();
   }
 }
 void Rimocon::readVolumes(){
-  for(Volume vlm: this->volumes){
+  for(Volume& vlm: this->volumes){
   //for(int vlm_id; vlm_id < VLM; vlm_id++){
     vlm.readValue();
   }
 }
 void Rimocon::readJoysticks(){
-  for(Joystick jstk: this->joysticks){
+  for(Joystick& jstk: this->joysticks){
   //for(int jstk_id; jstk_id < JSTK*3; jstk_id++){
     jstk.readAll();
   }
 }
-/*
-void Rimocon::detectAll(bool resultBtn[], int resultTgl[], int resultVlm[], Polar resultJstkTilte[], bool resultJstkPush[]){
-  this->buttonPushed(resultBtn);
-  this->toggleFliped(resultTgl);
-  this->volumeMoved(resultVlm);
-  this->joystickTilted(resultJstkTilte);
-  this->joystickPushed(resultJstkPush);
-}
 
-void Rimocon::buttonPushed(bool resultBtn[]){
-  if(!BTN || resultBtn == NULL) return;
-  for(int btn_id; btn_id < BTN; btn_id++){
-    resultBtn[btn_id] = this->buttons[btn_id].isPushed();
+
+void Rimocon::detectAll(){
+  this->buttonPushed();
+  this->toggleFliped();
+  this->volumeMoved();
+  this->joystickTilted();
+  this->joystickPushed();
+};
+
+void Rimocon::buttonPushed(){
+  uint8_t btnId = 0;
+  for(Button& btn: this->buttons){
+    this->resultBtn[btnId] = btn.isPushed();
+    btnId += 1;
   }
 }
 
-void Rimocon::toggleFliped(bool resultTgl[]){
-  if(!TGL || resultTgl == NULL) return;
-  for(int tgl_id; tgl_id < TGL*2; tgl_id++){
-    resultTgl[tgl_id] = this->toggles[tgl_id].isFliped();
+void Rimocon::toggleFliped(){
+  uint8_t tglId = 0;
+  for(Toggle& tgl: this->toggles){
+    this->resultTgl[tglId] = tgl.isFliped();
+    tglId += 1;
   }
 }
 
-void Rimocon::volumeMoved(bool resultVlm[]){
-  if(!VLM || resultVlm == NULL) return;
-  for(int vlm_id; vlm_id < VLM; vlm_id++){
-    resultVlm[vlm_id] = this->volumes[vlm_id].isMoved();
+void Rimocon::volumeMoved(){
+  uint8_t vlmId = 0;
+  for(Volume& vlm: this->volumes){
+    this->resultVlm[vlmId] = vlm.isMoved();
+    vlmId += 1;
   }
 }
 
-void Rimocon::joystickTilted(bool resultJstkTilt[]){
-  if(!JSTK || resultJstkTilt == NULL) return;
-  for(int jstk_id; jstk_id < JSTK*3; jstk_id++){
-    resultJstkTilt[jstk_id] = this->joysticks[jstk_id].isTilted();
+void Rimocon::joystickTilted(){
+  uint8_t jstkId = 0;
+  for(Joystick& jstk: this->joysticks){
+    this->resultJstkTilte[jstkId] = jstk.isTilted();
+    jstkId += 1;
   }
 }
 
-void Rimocon::joystickPushed(bool resultJstkPush[]){
-  if(!JSTK || resultJstkPush == NULL) return;
-  for(int jstk_id; jstk_id < JSTK*3; jstk_id++){
-    resultJstkPush[jstk_id] = this->joysticks[jstk_id].isPushed();
+void Rimocon::joystickPushed(){
+  uint8_t jstkId = 0;
+  for(Joystick& jstk: this->joysticks){
+    this->resultJstkPush[jstkId] = jstk.isPushed();
+    jstkId += 1;
   }
 }
-*/
