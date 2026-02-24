@@ -4,6 +4,41 @@
 #include <Arduino.h>
 #include "Parts.h"
 
+/////////////////////////////////
+
+template <class Objtype, typename Valtype, int NUM = 1>
+struct Array{
+  Array(){}
+  Objtype objects[NUM];
+  Valtype states[NUM];
+  Valtype changes[NUM];
+
+  bool attachAll(uint8_t pins[]){
+    bool is_succesed;
+    for(int i; i<NUM; i++){
+      is_succesed = is_succesed && objects[i].attach(pins[i]);
+    }
+    return is_succesed;
+  }
+  void readAll(){
+    for(int i=0; i<NUM; i++) this->objects[i].read();
+  }
+  const Valtype (&getAll() const)[NUM]{
+    for(int i=0; i<NUM; i++){
+      this->states[i] = this->objects[i].get();
+    }
+    return this->states;
+  }
+  const Valtype (&detectAll())[NUM]{
+    for(int i=0; i<NUM; i++){
+      this->changes[i] = this->objects[i].detect();
+    }
+    return this->changes;
+  }
+};
+
+/////////////////////////////////
+
 #ifndef BUTTON_NUM
   #define BUTTON_NUM 1
 #endif
@@ -17,47 +52,21 @@
   #define JOYSTICK_NUM 1
 #endif
 
+/////////////////////////////////
+
 template<int BUTTON = BUTTON_NUM, int TOGGLE = TOGGLE_NUM, int VOLUME = VOLUME_NUM, int JOYSTICK = JOYSTICK_NUM>
-class Rimocon{
+struct Rimocon{
   private:
     static constexpr int BTN = BUTTON;
     static constexpr int TGL = TOGGLE;
     static constexpr int VLM = VOLUME;
     static constexpr int JSTK = JOYSTICK;
-
   public:
     Rimocon(){}
-    ~Rimocon(){}
-    //bool attach(uint8_t pinAll[]); // やりたくないとは言わないがだるすぎる 
-      bool attachButton(uint8_t pins[]);
-      bool attachVolume(uint8_t pins[]);
-      bool attachToggle(uint8_t pin1s[], uint8_t pin2s[]);
-      bool attachJoystick(uint8_t pinXs[], uint8_t pinYs[], uint8_t pinBtns[]);
-
-    void readAll();
-      void readButtons();
-      void readToggles();
-      void readVolumes();
-      void readJoysticks();
-
-    void detectAll();
-      void buttonPushed();
-      void toggleFliped();
-      void volumeMoved();
-      void joystickTilted();
-      void joystickPushed();
-
-    Button buttons[BTN];
-    Toggle toggles[TGL];
-    Volume volumes[VLM];
-    Joystick joysticks[JSTK];
-
-    bool resultBtn[];
-    int resultTgl[];
-    int resultVlm[];
-    Polar resultJstkTilte[];
-    bool resultJstkPush[];
-
+    Array<Button,bool,BTN> buttons;
+    Array<Volume,int,VLM> volumes;
+    Array<Toggle,int,TGL> toggles;
+    Array<Joystick,Polar,JSTK> joysticks;
 };
 
 #endif
