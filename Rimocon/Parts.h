@@ -126,6 +126,7 @@ struct Toggle : public InputDevice<int>{
     bool attach(uint8_t pinL = UNDEFINEDPIN, uint8_t pinR = UNDEFINEDPIN){
       return this->left.attach(pinL) && this->right.attach(pinR);
     }
+    bool attach(uint8_t pins[]){return this->attach(pins[0], pins[1]);}
     void readState(){
       this->left.readPlessed();
       this->right.readPlessed();
@@ -173,6 +174,7 @@ struct Joystick : InputDevice<Polar>{
     bool attach(uint8_t pinBtn = UNDEFINEDPIN, uint8_t pinX = UNDEFINEDPIN, uint8_t pinY = UNDEFINEDPIN){
       return this->button.attach(pinBtn) && this->x.attach(pinX) && this->y.attach(pinY);
     }
+    bool attach(uint8_t pins[]){return this->attach(pins[0], pins[1], pins[2]);}
     void readAll(){
       this->button.readPlessed();
       this->x.readPosition();

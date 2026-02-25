@@ -13,10 +13,18 @@ struct Array{
   Valtype states[NUM];
   Valtype changes[NUM];
 
-  bool attachAll(uint8_t pins[]){
+  bool attachAll(uint8_t pins[], int pinnum = 1){
     bool is_succesed;
-    for(int i; i<NUM; i++){
-      is_succesed = is_succesed && objects[i].attach(pins[i]);
+    if(pinnunm>1){
+      for(int i; i<NUM; i++){
+        uint8_t pins_[pinnum];
+        for(int j; j<pinnum;j++) pins_[j] = pins[i*pinnum+j];
+        is_succesed = is_succesed && objects[i].attach(pins_);
+    }
+    else{
+      for(int i; i<NUM; i++){
+        is_succesed = is_succesed && objects[i].attach(pins[i]);
+      }
     }
     return is_succesed;
   }
