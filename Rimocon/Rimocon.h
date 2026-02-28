@@ -15,11 +15,12 @@ struct Array{
 
   bool attachAll(uint8_t pins[], int pinnum = 1){
     bool is_succesed;
-    if(pinnunm>1){
+    if(pinnum>1){
       for(int i; i<NUM; i++){
         uint8_t pins_[pinnum];
-        for(int j; j<pinnum;j++) pins_[j] = pins[i*pinnum+j];
+        for(int j; j<pinnum; j++) {pins_[j] = pins[i*pinnum+j];}
         is_succesed = is_succesed && objects[i].attach(pins_);
+      }
     }
     else{
       for(int i; i<NUM; i++){
